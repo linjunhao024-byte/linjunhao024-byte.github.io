@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>linjunhao024-byte — Deep Web Matrix Core</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════════
+   LOCAL CYBERPUNK FONT
+   ══════════════════════════════════════════════════════════════ */
+@font-face {
+  font-family: 'Cyberpunk';
+  src: url('./Cyberpunk-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESET & ROOT
+   ══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --green:  #00FF41;
+  --green2: #00cc33;
+  --cyan:   #00F0FF;
+  --cyan2:  #00d4e6;
+  --red:    #FF003C;
+  --blue:   #00b4ff;
+  --yellow: #FCEE0A;
+  --pink:   #FF003C;
+  --bg:     #050510;
+  --bg-alt: #0a0a18;
+  --dim:    #1a1a2e;
+  --text:   #7a7a8e;
+  --white:  #d0d0e0;
+  --glow:   0 0 10px rgba(252,238,10,0.7), 0 0 20px rgba(252,238,10,0.5), 0 0 40px rgba(252,238,10,0.3), 0 0 80px rgba(252,238,10,0.15);
+  --glow-cyan: 0 0 10px rgba(0,240,255,0.6), 0 0 20px rgba(0,240,255,0.4), 0 0 40px rgba(0,240,255,0.2);
+  --glow-pink: 0 0 10px rgba(255,0,60,0.7), 0 0 20px rgba(255,0,60,0.5), 0 0 40px rgba(255,0,60,0.3), 0 0 80px rgba(255,0,60,0.15);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Courier New', Consolas, 'Liberation Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CANVAS BACKGROUND
+   ══════════════════════════════════════════════════════════════ */
+#particle-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SCANLINE OVERLAY
+   ══════════════════════════════════════════════════════════════ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 240, 255, 0.01) 2px,
+    rgba(0, 240, 255, 0.01) 4px
+  );
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   WRAPPER
+   ══════════════════════════════════════════════════════════════ */
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PAGE HEADER
+   ══════════════════════════════════════════════════════════════ */
+.page-header {
+  text-align: center;
+  margin-bottom: 60px;
+  position: relative;
+}
+
+.page-header::before {
+  content: '[ CLASSIFIED // DEEP WEB MATRIX CORE ]';
+  display: block;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: rgba(252,238,10,0.3);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.page-header h1 {
+  font-family: 'Cyberpunk', 'Orbitron', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--yellow);
+  text-shadow:
+    0 0 10px rgba(252,238,10,0.8),
+    0 0 20px rgba(252,238,10,0.6),
+    0 0 40px rgba(252,238,10,0.4),
+    0 0 80px rgba(252,238,10,0.2),
+    2px 0 rgba(255,0,60,0.3),
+    -2px 0 rgba(0,240,255,0.3);
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.page-header .subtitle {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--text);
+  text-transform: uppercase;
+}
+
+.page-header .subtitle .blink {
+  color: var(--yellow);
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   STATUS BAR
+   ══════════════════════════════════════════════════════════════ */
+.status-bar {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 48px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  flex-wrap: wrap;
+}
+
+.status-item {
+  color: var(--text);
+}
+
+.status-item .val {
+  color: var(--yellow);
+  margin-left: 6px;
+}
+
+.status-item .val.cyan { color: var(--cyan); }
+
+/* ══════════════════════════════════════════════════════════════
+   CARDS GRID — DATA-DRIVEN RESPONSIVE
+   ══════════════════════════════════════════════════════════════ */
+#portfolio-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 32px;
+  perspective: 1200px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TERMINAL CARD — GLASSMORPHISM + 3D TILT
+   ══════════════════════════════════════════════════════════════ */
+.terminal-card {
+  position: relative;
+  border: 1px solid rgba(0, 240, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0, 10, 15, 0.5);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+.terminal-card:hover {
+  box-shadow:
+    0 0 30px rgba(0, 255, 65, 0.06),
+    0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Per-card CP2077 themes ── */
+[data-project="lin-panel"] {
+  border-color: rgba(0, 240, 255, 0.12);
+}
+[data-project="lin-panel"]:hover {
+  border-color: rgba(0, 240, 255, 0.45);
+  box-shadow:
+    0 0 30px rgba(0, 240, 255, 0.1),
+    0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+[data-project="traffic-padding"] {
+  border-color: rgba(255, 0, 60, 0.12);
+}
+[data-project="traffic-padding"]:hover {
+  border-color: rgba(255, 0, 60, 0.45);
+  box-shadow:
+    0 0 30px rgba(255, 0, 60, 0.1),
+    0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* Glare overlay */
+.card-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    600px circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(0, 240, 255, 0.02) 30%,
+    transparent 60%
+  );
+}
+
+[data-project="traffic-padding"] .card-glare {
+  background: radial-gradient(
+    600px circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 0, 60, 0.05) 0%,
+    rgba(255, 0, 60, 0.02) 30%,
+    transparent 60%
+  );
+}
+
+.terminal-card:hover .card-glare {
+  opacity: 1;
+}
+
+/* ── Terminal title bar ── */
+.card-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  background: rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+}
+
+[data-project="traffic-padding"] .card-titlebar {
+  border-bottom: 1px solid rgba(255, 0, 60, 0.06);
+}
+
+.dot { width: 12px; height: 12px; border-radius: 50%; }
+.dot.r { background: #ff5f57; box-shadow: 0 0 6px rgba(255,95,87,0.4); }
+.dot.y { background: #febc2e; box-shadow: 0 0 6px rgba(254,188,46,0.4); }
+.dot.g { background: #28c840; box-shadow: 0 0 6px rgba(40,200,64,0.4); }
+
+.card-titlebar .title {
+  flex: 1;
+  text-align: center;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--text);
+  letter-spacing: 2px;
+}
+
+/* ── Card body ── */
+.card-body {
+  padding: 40px 32px 36px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   NEON LOGO + GLITCH
+   ══════════════════════════════════════════════════════════════ */
+.neon-logo {
+  font-family: 'Cyberpunk', 'Orbitron', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  color: var(--cyan);
+  text-shadow: var(--glow-cyan);
+  position: relative;
+  animation: glitch-skew 4s infinite linear alternate-reverse;
+}
+
+/* Card 1: Electric Cyan */
+[data-project="lin-panel"] .neon-logo {
+  color: #00F0FF;
+  text-shadow: 0 0 10px rgba(0,240,255,0.8), 0 0 20px rgba(0,240,255,0.6), 0 0 40px #00F0FF, 0 0 80px #00F0FF;
+}
+[data-project="lin-panel"] .neon-logo::before {
+  color: #FCEE0A;
+  text-shadow: -3px 0 #FCEE0A;
+}
+[data-project="lin-panel"] .neon-logo::after {
+  color: #FF003C;
+  text-shadow: 3px 0 #FF003C;
+}
+
+/* Card 2: Neon Pink */
+[data-project="traffic-padding"] .neon-logo {
+  color: #FF003C;
+  text-shadow: 0 0 10px rgba(255,0,60,0.8), 0 0 20px rgba(255,0,60,0.6), 0 0 40px #FF003C, 0 0 80px #FF003C;
+}
+[data-project="traffic-padding"] .neon-logo::before {
+  color: #00F0FF;
+  text-shadow: -3px 0 #00F0FF;
+}
+[data-project="traffic-padding"] .neon-logo::after {
+  color: #FCEE0A;
+  text-shadow: 3px 0 #FCEE0A;
+}
+
+/* ── Glitch layers ── */
+.neon-logo::before,
+.neon-logo::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.neon-logo::before {
+  color: var(--cyan);
+  text-shadow: -3px 0 var(--cyan);
+  z-index: -1;
+  animation: glitch-top 3s infinite linear alternate-reverse;
+  clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+}
+
+.neon-logo::after {
+  color: var(--red);
+  text-shadow: 3px 0 var(--red);
+  z-index: -2;
+  animation: glitch-bottom 2.5s infinite linear alternate-reverse;
+  clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+}
+
+@keyframes glitch-top {
+  0%, 90%  { transform: translate(0); }
+  91%      { transform: translate(-3px, -1px); }
+  92%      { transform: translate(3px, 1px); }
+  93%      { transform: translate(-2px, 0); }
+  94%, 100% { transform: translate(0); }
+}
+
+@keyframes glitch-bottom {
+  0%, 88%  { transform: translate(0); }
+  89%      { transform: translate(4px, 1px); }
+  90%      { transform: translate(-3px, -1px); }
+  91%      { transform: translate(2px, 0); }
+  92%, 100% { transform: translate(0); }
+}
+
+@keyframes glitch-skew {
+  0%, 95%  { transform: skew(0deg); }
+  96%      { transform: skew(0.5deg); }
+  97%      { transform: skew(-0.5deg); }
+  98%      { transform: skew(0.3deg); }
+  99%, 100% { transform: skew(0deg); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SLOGAN / SUB / DIVIDER
+   ══════════════════════════════════════════════════════════════ */
+.card-slogan {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 500;
+  text-align: center;
+  font-size: 13px;
+  color: var(--cyan);
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+  text-shadow: var(--glow-cyan);
+}
+
+[data-project="traffic-padding"] .card-slogan {
+  color: #FF003C;
+  text-shadow: 0 0 10px rgba(255,0,60,0.5);
+}
+
+.card-sub {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 500;
+  text-align: center;
+  font-size: 10px;
+  color: var(--text);
+  margin-bottom: 28px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+[data-project="traffic-padding"] .card-sub {
+  color: rgba(255,0,60,0.5);
+}
+
+.divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--dim), rgba(0,240,255,0.12), var(--dim), transparent);
+  margin: 28px 0;
+}
+
+[data-project="traffic-padding"] .divider {
+  background: linear-gradient(90deg, transparent, var(--dim), rgba(255,0,60,0.12), var(--dim), transparent);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SECTION LABELS
+   ══════════════════════════════════════════════════════════════ */
+.section-label {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 500;
+  font-size: 10px;
+  color: var(--yellow);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  opacity: 0.7;
+}
+
+.section-label::before {
+  content: '> ';
+  color: var(--cyan);
+}
+
+[data-project="traffic-padding"] .section-label::before {
+  color: #FF003C;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FEATURES
+   ══════════════════════════════════════════════════════════════ */
+.features {
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.features p {
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--white);
+}
+
+.tag {
+  display: inline-block;
+  border: 1px solid rgba(0,240,255,0.2);
+  padding: 3px 12px;
+  border-radius: 3px;
+  font-size: 10px;
+  color: #00F0FF;
+  margin: 4px 3px;
+  background: rgba(0, 240, 255, 0.03);
+  transition: all 0.3s;
+}
+
+.tag:hover {
+  border-color: rgba(0,240,255,0.5);
+  background: rgba(0, 240, 255, 0.08);
+  box-shadow: 0 0 10px rgba(0,240,255,0.15);
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 4px;
+}
+
+.feature-list li {
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--white);
+  padding-left: 18px;
+  position: relative;
+}
+
+.feature-list li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: #FF003C;
+}
+
+[data-project="lin-panel"] .feature-list li::before {
+  color: #00F0FF;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   INSTALL BLOCKS — DEEP TERMINAL
+   ══════════════════════════════════════════════════════════════ */
+.install-block {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(0,240,255,0.08);
+  border-radius: 6px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.install-block:hover {
+  border-color: rgba(0,240,255,0.2);
+}
+
+.install-block.featured {
+  border-color: rgba(0,240,255,0.15);
+}
+
+.install-block.featured:hover {
+  border-color: rgba(0,240,255,0.35);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.4), 0 0 12px rgba(0,240,255,0.04);
+}
+
+/* Card 2: pink install blocks */
+[data-project="traffic-padding"] .install-block {
+  border-color: rgba(255,0,60,0.08);
+}
+[data-project="traffic-padding"] .install-block:hover {
+  border-color: rgba(255,0,60,0.2);
+}
+[data-project="traffic-padding"] .install-block.featured {
+  border-color: rgba(255,0,60,0.15);
+}
+[data-project="traffic-padding"] .install-block.featured:hover {
+  border-color: rgba(255,0,60,0.35);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.4), 0 0 12px rgba(255,0,60,0.04);
+}
+
+.install-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 14px;
+  background: rgba(0,0,0,0.3);
+  border-bottom: 1px solid rgba(0,240,255,0.06);
+}
+
+[data-project="traffic-padding"] .install-header {
+  border-bottom: 1px solid rgba(255,0,60,0.06);
+}
+
+.install-label {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--text);
+  padding: 3px 8px;
+  line-height: 1.4;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
+
+[data-project="traffic-padding"] .install-label {
+  color: rgba(255,0,60,0.6);
+}
+
+.install-label .mode {
+  color: #00F0FF;
+  text-shadow: 0 0 6px rgba(0,240,255,0.4);
+  margin-right: 4px;
+}
+.featured .install-label .mode {
+  color: #00F0FF;
+  text-shadow: 0 0 8px rgba(0,240,255,0.6);
+}
+
+[data-project="traffic-padding"] .install-label .mode {
+  color: #FF003C;
+  text-shadow: 0 0 6px rgba(255,0,60,0.4);
+}
+[data-project="traffic-padding"] .featured .install-label .mode {
+  color: #FF003C;
+  text-shadow: 0 0 8px rgba(255,0,60,0.6);
+}
+
+.copy-btn {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 500;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid rgba(0,240,255,0.15);
+  border-radius: 3px;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.copy-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(0,240,255,0.05), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s;
+}
+
+.copy-btn:hover::before {
+  transform: translateX(100%);
+}
+
+.copy-btn:hover {
+  color: #00F0FF;
+  border-color: rgba(0,240,255,0.5);
+  box-shadow: 0 0 8px rgba(0,240,255,0.2);
+}
+
+.copy-btn.copied {
+  color: #00F0FF;
+  border-color: rgba(0,240,255,0.4);
+}
+
+[data-project="traffic-padding"] .copy-btn {
+  border-color: rgba(255,0,60,0.15);
+}
+[data-project="traffic-padding"] .copy-btn::before {
+  background: linear-gradient(90deg, transparent, rgba(255,0,60,0.05), transparent);
+}
+[data-project="traffic-padding"] .copy-btn:hover {
+  color: #FF003C;
+  border-color: rgba(255,0,60,0.5);
+  box-shadow: 0 0 8px rgba(255,0,60,0.2);
+}
+[data-project="traffic-padding"] .copy-btn.copied {
+  color: #FF003C;
+  border-color: rgba(255,0,60,0.4);
+}
+
+.install-cmd {
+  padding: 14px 16px;
+  font-size: 11px;
+  line-height: 1.7;
+  color: #e0e0e0;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.install-cmd .prompt { color: #00F0FF; user-select: none; }
+.install-cmd .cmd    { color: #00F0FF; }
+.install-cmd .url    { color: #e0e0e0; word-break: break-all; }
+.install-cmd .op     { color: var(--text); }
+
+[data-project="traffic-padding"] .install-cmd .prompt { color: #FF003C; }
+[data-project="traffic-padding"] .install-cmd .cmd    { color: #FF003C; }
+
+/* ══════════════════════════════════════════════════════════════
+   CURSOR BLINK
+   ══════════════════════════════════════════════════════════════ */
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background: #00F0FF;
+  margin-left: 4px;
+  vertical-align: middle;
+  animation: cursor-blink 1s step-end infinite;
+}
+
+[data-project="traffic-padding"] .cursor {
+  background: #FF003C;
+}
+
+@keyframes cursor-blink {
+  50% { opacity: 0; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   GITHUB BUTTON
+   ══════════════════════════════════════════════════════════════ */
+.gh-section { text-align: center; margin-top: 24px; }
+
+.gh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #000000;
+  background: #FCEE0A;
+  border: none;
+  border-radius: 0;
+  padding: 12px 30px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.15s;
+  box-shadow: 0 0 20px rgba(252,238,10,0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.gh-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.gh-btn:hover::after {
+  transform: translateX(100%);
+}
+
+.gh-btn:hover {
+  background: #FF003C;
+  color: #ffffff;
+  box-shadow:
+    0 0 30px rgba(255,0,60,0.5),
+    0 0 60px rgba(255,0,60,0.2);
+  transform: translateY(-2px);
+}
+
+.gh-btn svg { width: 16px; height: 16px; fill: #000000; }
+
+.gh-btn:hover svg { fill: #ffffff; }
+
+/* ══════════════════════════════════════════════════════════════
+   BGM CONTROL BUTTON
+   ══════════════════════════════════════════════════════════════ */
+.bgm-btn {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 9999;
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #FCEE0A;
+  background: transparent;
+  border: 1px solid #FCEE0A;
+  border-radius: 0;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.bgm-btn:hover {
+  animation: bgm-glitch 0.3s infinite;
+}
+
+@keyframes bgm-glitch {
+  0%   { transform: translate(0); }
+  20%  { transform: translate(-1px, 1px); }
+  40%  { transform: translate(1px, -1px); }
+  60%  { transform: translate(-1px, 0); }
+  80%  { transform: translate(1px, 1px); }
+  100% { transform: translate(0); }
+}
+
+.bgm-btn.playing {
+  background: #FF003C;
+  color: #000000;
+  border-color: #FF003C;
+  box-shadow: 0 0 15px rgba(255,0,60,0.4);
+}
+
+.bgm-btn.playing:hover {
+  animation: bgm-glitch 0.3s infinite;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CYBER TOAST
+   ══════════════════════════════════════════════════════════════ */
+.cyber-toast {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  z-index: 10000;
+  pointer-events: none;
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+}
+
+.cyber-toast.show {
+  transform: translateX(-50%) translateY(24px);
+  opacity: 1;
+}
+
+.cyber-toast.glitch-out {
+  animation: toast-glitch-out 0.5s forwards;
+}
+
+@keyframes toast-glitch-out {
+  0%   { transform: translateX(-50%) translateY(24px); opacity: 1; }
+  20%  { transform: translateX(-48%) translateY(24px) skewX(2deg); opacity: 1; }
+  40%  { transform: translateX(-52%) translateY(24px) skewX(-1deg); opacity: 0.8; clip-path: inset(10% 0 40% 0); }
+  60%  { transform: translateX(-50%) translateY(24px) skewX(3deg); opacity: 0.5; clip-path: inset(30% 0 10% 0); }
+  80%  { transform: translateX(-53%) translateY(24px) skewX(-2deg); opacity: 0.2; clip-path: inset(50% 0 20% 0); }
+  100% { transform: translateX(-50%) translateY(-100%); opacity: 0; clip-path: inset(0); }
+}
+
+.toast-inner {
+  background: rgba(0, 0, 0, 0.92);
+  border: 1px solid #FCEE0A;
+  border-radius: 0;
+  padding: 14px 28px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #FCEE0A;
+  text-shadow: 0 0 8px rgba(252,238,10,0.5);
+  box-shadow:
+    0 0 20px rgba(252,238,10,0.15),
+    inset 0 0 20px rgba(252,238,10,0.03);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.toast-inner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #FCEE0A, transparent);
+  animation: toast-scanline 1.5s infinite;
+}
+
+@keyframes toast-scanline {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.toast-inner .prefix {
+  color: #FF003C;
+  margin-right: 6px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════════════════════ */
+.footer {
+  text-align: center;
+  margin-top: 60px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px rgba(0,0,0,0.8);
+}
+
+.footer-tg {
+  margin-bottom: 10px;
+}
+
+.footer-copy {
+  opacity: 0.8;
+}
+
+.footer a { color: var(--text); text-decoration: none; transition: color 0.3s; }
+.footer a:hover { color: #00F0FF; }
+
+.tg-link {
+  display: inline-block;
+  color: #FF003C;
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 2px;
+  animation: breathe-glow 2.5s infinite ease-in-out;
+}
+
+.tg-link:hover {
+  text-shadow: 0 0 14px #FF003C, 0 0 28px rgba(255,0,60,0.5);
+}
+
+@keyframes breathe-glow {
+  0%   { transform: scale(1);    text-shadow: 0 0 6px rgba(255,0,60,0.4); }
+  50%  { transform: scale(1.08); text-shadow: 0 0 14px #FF003C, 0 0 30px rgba(255,0,60,0.5); }
+  100% { transform: scale(1);    text-shadow: 0 0 6px rgba(255,0,60,0.4); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .page-header h1 { font-size: 2.4rem; letter-spacing: 4px; }
+  .neon-logo { font-size: 2.2rem; }
+}
+
+@media (max-width: 600px) {
+  #portfolio-container {
+    grid-template-columns: 1fr;
+  }
+  .card-body { padding: 28px 18px 24px; }
+  .neon-logo { font-size: 1.8rem; letter-spacing: 3px; }
+  .install-cmd { font-size: 10px; }
+  .page-header h1 { font-size: 1.8rem; }
+  .status-bar { gap: 16px; }
+  .toast-inner { font-size: 10px; padding: 10px 18px; letter-spacing: 1px; }
+  .bgm-btn { font-size: 9px; padding: 6px 10px; top: 10px; right: 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════
+     CANVAS — PARTICLE NETWORK
+     ════════════════════════════════════════════════════════════ -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- ════════════════════════════════════════════════════════════
+     CYBER TOAST
+     ════════════════════════════════════════════════════════════ -->
+<div class="cyber-toast" id="cyber-toast">
+  <div class="toast-inner">
+    <span class="prefix">[SYSTEM]</span> <span id="toast-msg">载荷代码已复制到剪贴板</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     MAIN STRUCTURE — ALL CONTENT DRIVEN BY JS
+     ════════════════════════════════════════════════════════════ -->
+<div class="wrapper">
+
+  <div class="page-header">
+    <h1>linjunhao024-byte</h1>
+    <p class="subtitle">[ Deep Web Matrix Core — Open Source Projects ] <span class="blink">█</span></p>
+  </div>
+
+  <div class="status-bar">
+    <span class="status-item">NODES<span class="val" id="node-count">--</span></span>
+    <span class="status-item">STATUS<span class="val">ONLINE</span></span>
+    <span class="status-item">PROTOCOL<span class="val cyan">SHELL/SH</span></span>
+    <span class="status-item">UPTIME<span class="val" id="uptime">--:--:--</span></span>
+  </div>
+
+  <!-- ═══ CARDS INJECT HERE ═══ -->
+  <main id="portfolio-container"></main>
+
+  <div class="footer">
+    <div class="footer-tg">
+      <a class="tg-link" href="https://t.me/LIN_2077" target="_blank" rel="noopener">TG: @LIN_2077</a>
+    </div>
+    <div class="footer-copy">
+      &copy; 2026 <a href="https://github.com/linjunhao024-byte" target="_blank" rel="noopener">linjunhao024-byte</a> &nbsp;·&nbsp; Built with <span style="color:var(--green);">&#9612;</span> Shell
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════
+     AUDIO — BGM
+     ════════════════════════════════════════════════════════════ -->
+<audio id="cyber-bgm" loop src="./bgm.mp3"></audio>
+
+<!-- BGM Control Button -->
+<button class="bgm-btn" id="bgm-btn">[ 🎵 SYS.BGM : OFFLINE ]</button>
+
+<!-- ════════════════════════════════════════════════════════════
+     JAVASCRIPT — DATA-DRIVEN ENGINE
+     ════════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+  'use strict';
+
+  /* ══════════════════════════════════════════════════════════
+     0. PROJECT DATA — SINGLE SOURCE OF TRUTH
+     ══════════════════════════════════════════════════════════ */
+  var PROJECT_DATA = [
+    {
+      id: 'lin-panel',
+      terminalTitle: 'lin-panel — bash',
+      logo: 'LIN-PANEL',
+      slogan: '极简、极速的 NAT 小鸡专属监控面板',
+      sub: '[ LIGHTWEIGHT NAT SERVER MONITOR ]',
+      featuresMode: 'tags',
+      featuresLine: '纯 Shell 驱动，拒绝臃肿框架',
+      tags: ['零端口占用', '零框架依赖', '纯 Shell 驱动'],
+      installs: [
+        {
+          label: '标准安装',
+          icon: '$',
+          featured: false,
+          cmd: 'wget -O install.sh https://raw.githubusercontent.com/linjunhao024-byte/Lin-Panel/main/install-ubuntu.sh && bash install.sh',
+          display: {
+            cmd: 'wget',
+            args: '-O install.sh',
+            url: 'https://raw.githubusercontent.com/linjunhao024-byte/Lin-Panel/main/install-ubuntu.sh',
+            tail: '&& bash install.sh'
+          }
+        },
+        {
+          label: '无痕刺客',
+          icon: '⚡',
+          featured: true,
+          cmd: 'cd /tmp && wget -qO- https://raw.githubusercontent.com/linjunhao024-byte/Lin-Panel/main/install-ubuntu.sh | bash',
+          display: {
+            cmd: 'cd',
+            args: '/tmp && wget',
+            args2: '-qO-',
+            url: 'https://raw.githubusercontent.com/linjunhao024-byte/Lin-Panel/main/install-ubuntu.sh',
+            tail: '| bash'
+          }
+        }
+      ],
+      github: 'https://github.com/linjunhao024-byte/Lin-Panel'
+    },
+    {
+      id: 'traffic-padding',
+      terminalTitle: 'traffic-padding — bash',
+      logo: 'LIN-PADDING',
+      slogan: '使云服务器上下行流量比例自然化，告别 1:1 封锁风险。',
+      sub: '[ TRAFFIC PADDING MICROSERVICE ]',
+      featuresMode: 'list',
+      featureItems: [
+        '全天候随机微量碎片填充 (Micro-padding)',
+        'Systemd 内核级极限降权，0 业务抢占',
+        '国内大厂 CDN 高可用 URL 池'
+      ],
+      installs: [
+        {
+          label: '海外直连',
+          icon: '$',
+          featured: false,
+          cmd: 'curl -sL https://raw.githubusercontent.com/linjunhao024-byte/traffic-padding/main/install.sh | sudo bash',
+          display: {
+            cmd: 'curl',
+            args: '-sL',
+            url: 'https://raw.githubusercontent.com/linjunhao024-byte/traffic-padding/main/install.sh',
+            tail: '| sudo bash'
+          }
+        },
+        {
+          label: '国内加速',
+          icon: '⚡',
+          featured: true,
+          cmd: 'curl -sL https://ghp.ci/https://raw.githubusercontent.com/linjunhao024-byte/traffic-padding/main/install.sh | sudo bash',
+          display: {
+            cmd: 'curl',
+            args: '-sL',
+            url: 'https://ghp.ci/https://raw.githubusercontent.com/linjunhao024-byte/traffic-padding/main/install.sh',
+            tail: '| sudo bash'
+          }
+        }
+      ],
+      github: 'https://github.com/linjunhao024-byte/traffic-padding'
+    }
+  ];
+
+
+  /* ══════════════════════════════════════════════════════════
+     1. PARTICLE NETWORK — CANVAS
+     ══════════════════════════════════════════════════════════ */
+  var canvas = document.getElementById('particle-canvas');
+  var ctx = canvas.getContext('2d');
+  var W, H;
+  var particles = [];
+  var mouse = { x: -9999, y: -9999 };
+  var PARTICLE_COUNT_BASE = 80;
+  var CONNECTION_DIST = 140;
+  var MOUSE_RADIUS = 150;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  document.addEventListener('mousemove', function(e) {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  function Particle() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.6;
+    this.vy = (Math.random() - 0.5) * 0.6;
+    this.r = Math.random() * 1.5 + 0.5;
+    this.color = Math.random() > 0.5 ? 'rgba(0,255,65,' : 'rgba(8,247,254,';
+  }
+
+  Particle.prototype.update = function() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0) this.x = W;
+    if (this.x > W) this.x = 0;
+    if (this.y < 0) this.y = H;
+    if (this.y > H) this.y = 0;
+  };
+
+  Particle.prototype.draw = function() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = this.color + '0.6)';
+    ctx.fill();
+  };
+
+  function initParticles() {
+    var count = Math.min(PARTICLE_COUNT_BASE, Math.floor((W * H) / 14000));
+    particles = [];
+    for (var i = 0; i < count; i++) {
+      particles.push(new Particle());
+    }
+  }
+  initParticles();
+  window.addEventListener('resize', initParticles);
+
+  function drawLines() {
+    for (var i = 0; i < particles.length; i++) {
+      var a = particles[i];
+      for (var j = i + 1; j < particles.length; j++) {
+        var b = particles[j];
+        var dx = a.x - b.x;
+        var dy = a.y - b.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONNECTION_DIST) {
+          var alpha = (1 - dist / CONNECTION_DIST) * 0.2;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = a.color + alpha + ')';
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+      }
+      var mdx = a.x - mouse.x;
+      var mdy = a.y - mouse.y;
+      var mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+      if (mDist < MOUSE_RADIUS) {
+        var mAlpha = (1 - mDist / MOUSE_RADIUS) * 0.45;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.strokeStyle = 'rgba(0,255,65,' + mAlpha + ')';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+    }
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < particles.length; i++) {
+      particles[i].update();
+      particles[i].draw();
+    }
+    drawLines();
+    requestAnimationFrame(animateParticles);
+  }
+  animateParticles();
+
+
+  /* ══════════════════════════════════════════════════════════
+     2. RENDER CARDS — DATA-DRIVEN DOM
+     ══════════════════════════════════════════════════════════ */
+  var container = document.getElementById('portfolio-container');
+
+  function escHTML(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function renderDisplay(d) {
+    var html = '<span class="prompt">❯ </span>';
+    html += '<span class="cmd">' + escHTML(d.cmd) + '</span> ';
+    if (d.args) html += '<span class="op">' + escHTML(d.args) + '</span> ';
+    if (d.args2) html += '<span class="op">' + escHTML(d.args2) + '</span> ';
+    if (d.url) html += '<span class="url">' + escHTML(d.url) + '</span> ';
+    if (d.tail) html += '<span class="op">' + escHTML(d.tail) + '</span>';
+    html += '<span class="cursor"></span>';
+    return html;
+  }
+
+  function renderFeatures(project) {
+    if (project.featuresMode === 'list') {
+      var items = project.featureItems || [];
+      var html = '<ul class="feature-list">';
+      for (var i = 0; i < items.length; i++) {
+        html += '<li>' + escHTML(items[i]) + '</li>';
+      }
+      html += '</ul>';
+      return html;
+    }
+    // tags mode
+    var tags = project.tags || [];
+    var html = '<div class="features">';
+    html += '<p>' + escHTML(project.featuresLine) + '</p>';
+    html += '<p style="margin-top:8px;">';
+    for (var i = 0; i < tags.length; i++) {
+      html += '<span class="tag">' + escHTML(tags[i]) + '</span>';
+    }
+    html += '</p></div>';
+    return html;
+  }
+
+  function renderInstalls(project) {
+    var installs = project.installs || [];
+    var html = '';
+    for (var i = 0; i < installs.length; i++) {
+      var inst = installs[i];
+      var cls = inst.featured ? ' install-block featured' : ' install-block';
+      html += '<div class="' + cls + '">';
+      html += '  <div class="install-header">';
+      html += '    <span class="install-label"><span class="mode">' + escHTML(inst.icon) + '</span> ' + escHTML(inst.label) + '</span>';
+      html += '    <button class="copy-btn" data-cmd="' + escHTML(inst.cmd) + '">[ COPY ]</button>';
+      html += '  </div>';
+      html += '  <div class="install-cmd">' + renderDisplay(inst.display) + '</div>';
+      html += '</div>';
+    }
+    return html;
+  }
+
+  function renderCards() {
+    var html = '';
+    for (var i = 0; i < PROJECT_DATA.length; i++) {
+      var p = PROJECT_DATA[i];
+      html += '<div class="terminal-card" data-tilt data-project="' + p.id + '">';
+      html += '  <div class="card-glare"></div>';
+      html += '  <div class="card-titlebar">';
+      html += '    <span class="dot r"></span>';
+      html += '    <span class="dot y"></span>';
+      html += '    <span class="dot g"></span>';
+      html += '    <span class="title">' + escHTML(p.terminalTitle) + '</span>';
+      html += '  </div>';
+      html += '  <div class="card-body">';
+      html += '    <h2 class="neon-logo" data-text="' + escHTML(p.logo) + '">' + escHTML(p.logo) + '</h2>';
+      html += '    <p class="card-slogan">' + escHTML(p.slogan) + '</p>';
+      html += '    <p class="card-sub">' + escHTML(p.sub) + '</p>';
+      html += '    <hr class="divider">';
+      html += '    <p class="section-label">manifesto</p>';
+      html += '    ' + renderFeatures(p);
+      html += '    <hr class="divider">';
+      html += '    <p class="section-label">deploy</p>';
+      html += '    ' + renderInstalls(p);
+      html += '    <div class="gh-section">';
+      html += '      <a class="gh-btn" href="' + escHTML(p.github) + '" target="_blank" rel="noopener">';
+      html += '        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>';
+      html += '        STAR ON GITHUB';
+      html += '      </a>';
+      html += '    </div>';
+      html += '  </div>';
+      html += '</div>';
+    }
+    container.innerHTML = html;
+
+    // update node count
+    document.getElementById('node-count').textContent = PROJECT_DATA.length < 10 ? '0' + PROJECT_DATA.length : '' + PROJECT_DATA.length;
+  }
+
+  renderCards();
+
+
+  /* ══════════════════════════════════════════════════════════
+     3. BIND 3D TILT + GLARE (AFTER DOM READY)
+     ══════════════════════════════════════════════════════════ */
+  var MAX_TILT = 1.2;
+  var cards = container.querySelectorAll('[data-tilt]');
+
+  for (var ci = 0; ci < cards.length; ci++) {
+    (function(card) {
+      var glare = card.querySelector('.card-glare');
+
+      card.addEventListener('mousemove', function(e) {
+        var rect = card.getBoundingClientRect();
+        var px = (e.clientX - rect.left) / rect.width;
+        var py = (e.clientY - rect.top) / rect.height;
+        var rotY = (px - 0.5) * 2 * MAX_TILT;
+        var rotX = (0.5 - py) * 2 * MAX_TILT;
+
+        card.style.transform = 'perspective(1000px) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg) scale3d(1.02,1.02,1.02)';
+
+        glare.style.setProperty('--glare-x', (px * 100) + '%');
+        glare.style.setProperty('--glare-y', (py * 100) + '%');
+      });
+
+      card.addEventListener('mouseleave', function() {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
+        card.style.transition = 'transform 0.5s ease';
+        setTimeout(function() { card.style.transition = ''; }, 500);
+      });
+
+      card.addEventListener('mouseenter', function() {
+        card.style.transition = '';
+      });
+    })(cards[ci]);
+  }
+
+
+  /* ══════════════════════════════════════════════════════════
+     4. CYBER TOAST
+     ══════════════════════════════════════════════════════════ */
+  var toastEl = document.getElementById('cyber-toast');
+  var toastMsg = document.getElementById('toast-msg');
+  var toastTimer = null;
+
+  function showToast(msg) {
+    if (toastTimer) {
+      clearTimeout(toastTimer);
+      toastEl.classList.remove('show', 'glitch-out');
+    }
+    toastMsg.textContent = msg || '载荷代码已复制到剪贴板';
+    void toastEl.offsetWidth;
+    toastEl.classList.remove('glitch-out');
+    toastEl.classList.add('show');
+
+    toastTimer = setTimeout(function() {
+      toastEl.classList.add('glitch-out');
+      setTimeout(function() {
+        toastEl.classList.remove('show', 'glitch-out');
+        toastTimer = null;
+      }, 600);
+    }, 3000);
+  }
+
+
+  /* ══════════════════════════════════════════════════════════
+     5. COPY BUTTONS (DELEGATED — WORKS FOR DYNAMIC DOM)
+     ══════════════════════════════════════════════════════════ */
+  container.addEventListener('click', function(e) {
+    var btn = e.target.closest('.copy-btn');
+    if (!btn) return;
+
+    var cmd = btn.getAttribute('data-cmd');
+    if (!cmd) return;
+
+    navigator.clipboard.writeText(cmd).then(function() {
+      var orig = btn.textContent;
+      btn.textContent = '[ DONE ]';
+      btn.classList.add('copied');
+      showToast('载荷代码已复制到剪贴板');
+      setTimeout(function() {
+        btn.textContent = orig;
+        btn.classList.remove('copied');
+      }, 2200);
+    }).catch(function() {
+      showToast('复制失败，请手动选择');
+    });
+  });
+
+
+  /* ══════════════════════════════════════════════════════════
+     6. UPTIME TICKER
+     ══════════════════════════════════════════════════════════ */
+  var uptimeEl = document.getElementById('uptime');
+  var startTime = Date.now();
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function updateUptime() {
+    var elapsed = Math.floor((Date.now() - startTime) / 1000);
+    var h = Math.floor(elapsed / 3600);
+    var m = Math.floor((elapsed % 3600) / 60);
+    var s = elapsed % 60;
+    uptimeEl.textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+  }
+
+  setInterval(updateUptime, 1000);
+  updateUptime();
+
+
+  /* ══════════════════════════════════════════════════════════
+     7. BGM CONTROL
+     ══════════════════════════════════════════════════════════ */
+  var bgm = document.getElementById('cyber-bgm');
+  var bgmBtn = document.getElementById('bgm-btn');
+
+  bgmBtn.addEventListener('click', function() {
+    if (bgm.paused) {
+      bgm.play().then(function() {
+        bgmBtn.textContent = '[ 🎵 SYS.BGM : ONLINE ]';
+        bgmBtn.classList.add('playing');
+      }).catch(function() {
+        bgmBtn.textContent = '[ 🎵 SYS.BGM : ERROR ]';
+      });
+    } else {
+      bgm.pause();
+      bgmBtn.textContent = '[ 🎵 SYS.BGM : OFFLINE ]';
+      bgmBtn.classList.remove('playing');
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
