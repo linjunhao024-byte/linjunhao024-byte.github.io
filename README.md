@@ -1,4 +1,4 @@
-<![CDATA[<p align="center">
+<p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FCEE0A,50:FF003C,100:00F0FF&height=220&section=header&text=linjunhao024-byte&fontSize=38&fontColor=050510&fontAlignY=35&desc=DEEP%20WEB%20MATRIX%20CORE&descSize=14&descAlignY=55&animation=twinkling" width="100%"/>
 </p>
 
@@ -136,4 +136,3 @@ open index.html
   <img src="https://komarev.com/ghpvc/?username=linjunhao024-byte&label=Profile%20Views&color=FCEE0A&style=flat-square" />
   <img src="https://img.shields.io/github/last-commit/linjunhao024-byte/linjunhao024-byte.github.io?style=flat-square&color=00F0FF" />
 </p>
-]]>
