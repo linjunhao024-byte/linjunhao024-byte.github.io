@@ -29,6 +29,20 @@
 
 ---
 
+## 📦 Deployed Matrix Cores | 已部署矩阵核心
+
+| 模组代号 (Module)                    | 功能描述 (Description)                          | 技术栈 (Tech Stack) |
+| :----------------------------------- | :---------------------------------------------- | :------------------ |
+| 🔵 **LIN-PANEL**                    | 极简、极速的 NAT 小鸡专属监控面板               | `Shell`             |
+| 🟣 **LIN-PADDING**                  | 流量碎片填充与防封锁微服务                      | `Bash`              |
+| 🛡️ **LIN-PORT SENTINEL**            | 自动化端口安全巡检防御系统                      | `Bash / Python`     |
+| 🟢 **LIN-X-MATRIX PRO**            | 跨平台高阶网络代理枢纽客户端                    | `Python`            |
+| 🏫 **LIN-NET GUARDIAN**             | 校园网无感自动认证与保活引擎                    | `Rust`              |
+| ☁️ **LIN-AWS MONITOR**              | AWS 云端算力态势感知与监控中枢                   | `Python`            |
+| 📡 **LIN-ROUTE RADAR**              | 动态路由嗅探与多端告警中枢                      | `Bash / Python`     |
+
+---
+
 ## ✨ Core Features | 核心特性
 
 | Feature | Description |

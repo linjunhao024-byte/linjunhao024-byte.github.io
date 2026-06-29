@@ -1073,6 +1073,175 @@ body::before {
         }
       ],
       github: 'https://github.com/linjunhao024-byte/traffic-padding'
+    },
+    {
+      id: 'port-sentinel',
+      terminalTitle: 'lin-port-sentinel — bash/py',
+      logo: 'LIN-PORT SENTINEL',
+      slogan: '轻量级自动化端口安全巡检防御系统',
+      sub: '[ PORT SECURITY MONITOR ]',
+      featuresMode: 'list',
+      featureItems: [
+        'AF_PACKET 零外部依赖原生双栈侦测引擎',
+        '内核级主动阻断与自适应动态蜜罐阈值',
+        '全拟态 Bash TUI 管控中枢与多通道聚合告警'
+      ],
+      installs: [
+        {
+          label: '一键部署',
+          icon: '⚡',
+          featured: true,
+          cmd: 'wget -qO port-monitor https://raw.githubusercontent.com/linjunhao024-byte/PortSentinel/main/port-monitor && wget -qO port-monitor.sh https://raw.githubusercontent.com/linjunhao024-byte/PortSentinel/main/port-monitor.sh && chmod +x port-monitor && sed -i \'s/\\r$//\' port-monitor.sh && sudo bash port-monitor.sh install',
+          display: {
+            cmd: 'wget',
+            args: '-qO port-monitor ... &&',
+            url: 'https://raw.githubusercontent.com/linjunhao024-byte/PortSentinel/main/port-monitor.sh',
+            tail: '&& sudo bash port-monitor.sh install'
+          }
+        },
+        {
+          label: 'Docker',
+          icon: '🐳',
+          featured: false,
+          cmd: 'docker run -d --name port-sentinel --network host --cap-add NET_ADMIN --cap-add NET_RAW portsentinel',
+          display: {
+            cmd: 'docker',
+            args: 'run -d --name port-sentinel --network host --cap-add NET_ADMIN --cap-add NET_RAW portsentinel'
+          }
+        }
+      ],
+      github: 'https://github.com/linjunhao024-byte/PortSentinel'
+    },
+    {
+      id: 'x-matrix-pro',
+      terminalTitle: 'lin-x-matrix-pro — python',
+      logo: 'LIN-X-MATRIX PRO',
+      slogan: '跨平台高阶网络代理枢纽客户端',
+      sub: '[ ADVANCED MATRIX TERMINAL CORE ]',
+      featuresMode: 'list',
+      featureItems: [
+        '支持 7 种代理核心热切换 (Xray/sing-box/mihomo 等)',
+        '原生 Socket 零开销 gRPC 流量采集与 ECharts 渲染',
+        'BGP 路由拓扑动态可视化与防封锁 TLS 分片'
+      ],
+      installs: [
+        {
+          label: '源码启动',
+          icon: '$',
+          featured: false,
+          cmd: 'git clone https://github.com/linjunhao024-byte/X-Matrix-Client-pro.git && cd X-Matrix-Client-pro && python main.py',
+          display: {
+            cmd: 'git',
+            args: 'clone',
+            url: 'https://github.com/linjunhao024-byte/X-Matrix-Client-pro.git',
+            tail: '&& cd X-Matrix-Client-pro && python main.py'
+          }
+        },
+        {
+          label: '独立打包',
+          icon: '⚡',
+          featured: true,
+          cmd: 'build.bat',
+          display: {
+            cmd: 'build.bat',
+            args: '# 产物路径: release/X-Matrix/X-Matrix.exe'
+          }
+        }
+      ],
+      github: 'https://github.com/linjunhao024-byte/X-Matrix-Client-pro'
+    },
+    {
+      id: 'campus-guardian',
+      terminalTitle: 'lin-campus-guardian — rust',
+      logo: 'LIN-NET GUARDIAN',
+      slogan: '专为校园复杂网络环境打造的保活守护程序',
+      sub: '[ AUTOMATED AUTHENTICATION ENGINE ]',
+      featuresMode: 'list',
+      featureItems: [
+        'ePortal 协议无感自动重连与潮汐式退避算法',
+        '物理 USB 共享热感知与防泄漏自动切换',
+        'Rust 强类型构建零依赖单文件守护引擎'
+      ],
+      installs: [
+        {
+          label: 'CLI 守护',
+          icon: '⚡',
+          featured: true,
+          cmd: 'CampusNetGuardian.exe --cli',
+          display: {
+            cmd: 'CampusNetGuardian.exe',
+            args: '--cli'
+          }
+        },
+        {
+          label: '源码构建',
+          icon: '$',
+          featured: false,
+          cmd: 'git clone https://github.com/linjunhao024-byte/CampusNetGuardian.git && cd CampusNetGuardian && cargo build --release',
+          display: {
+            cmd: 'git',
+            args: 'clone',
+            url: 'https://github.com/linjunhao024-byte/CampusNetGuardian.git',
+            tail: '&& cargo build --release'
+          }
+        }
+      ],
+      github: 'https://github.com/linjunhao024-byte/CampusNetGuardian'
+    },
+    {
+      id: 'aws-monitor',
+      terminalTitle: 'lin-aws-monitor — python',
+      logo: 'LIN-AWS MONITOR',
+      slogan: '高性能 AWS 云服务器态势感知与路由状态守护中枢',
+      sub: '[ ADVANCED CLOUD STATE GUARDIAN ]',
+      featuresMode: 'list',
+      featureItems: [
+        '1Hz 纯 Python 零阻塞高频带宽采样引擎',
+        '积分机制逆向算法与 O(log n) 突发事件检索',
+        'LLM 深度分析与动态路由拓扑感知'
+      ],
+      installs: [
+        {
+          label: '一键拉取',
+          icon: '⚡',
+          featured: true,
+          cmd: 'wget -O AWS-server-monitoring.tar.gz https://github.com/linjunhao024-byte/AWS-server-monitoring/archive/refs/heads/main.tar.gz && tar -xzf AWS-server-monitoring.tar.gz && cd AWS-server-monitoring-main/monitor && sudo bash install.sh',
+          display: {
+            cmd: 'wget',
+            args: '-O AWS-monitor.tar.gz',
+            url: 'https://github.com/linjunhao024-byte/AWS-server-monitoring/archive/refs/heads/main.tar.gz',
+            tail: '&& tar -xzf ... && sudo bash install.sh'
+          }
+        }
+      ],
+      github: 'https://github.com/linjunhao024-byte/AWS-server-monitoring'
+    },
+    {
+      id: 'route-radar',
+      terminalTitle: 'lin-route-radar — bash/py',
+      logo: 'LIN-ROUTE RADAR',
+      slogan: '动态路由嗅探与多端告警中枢',
+      sub: '[ DYNAMIC ROUTING MONITOR ]',
+      featuresMode: 'list',
+      featureItems: [
+        '周期性精准 Ping 与 Traceroute 路由拓扑变化追踪',
+        'Web 赛博朋克仪表板与 Telegram/钉钉双通道告警',
+        '自动基线学习与丢包/延迟异常智能判定'
+      ],
+      installs: [
+        {
+          label: '一键部署',
+          icon: '⚡',
+          featured: true,
+          cmd: 'apt install -y unzip && wget https://github.com/linjunhao024-byte/Dynamic-routing-monitoring/archive/refs/heads/main.zip && unzip main.zip && mv Dynamic-routing-monitoring-main route-monitor && rm main.zip && cd route-monitor && bash deploy.sh',
+          display: {
+            cmd: 'apt install -y unzip && wget',
+            url: 'https://github.com/linjunhao024-byte/Dynamic-routing-monitoring/archive/refs/heads/main.zip',
+            tail: '&& unzip main.zip ... && bash deploy.sh'
+          }
+        }
+      ],
+      github: 'https://github.com/linjunhao024-byte/Dynamic-routing-monitoring'
     }
   ];
 
