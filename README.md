@@ -84,15 +84,13 @@
 
 ## 📁 Project Structure | 目录结构
 
-```
+```text
 linjunhao024-byte.github.io/
-│
 ├── index.html                 # 主页面 — 所有 HTML/CSS/JS 集于一身
 ├── Cyberpunk-Regular.ttf      # 赛博朋克本地字体
 ├── bgm.mp3                    # 沉浸式 BGM 音轨
 ├── CNAME                      # 自定义域名 (io.ljh2077.com)
 ├── README.md                  # 你正在看的这个
-│
 └── (未来扩展)
     └── 项目数据源 JSON 数组内置于 index.html
         新增项目 = 追加一个对象，零配置自动渲染
@@ -102,25 +100,29 @@ linjunhao024-byte.github.io/
 
 ## 🎮 How It Works | 运作原理
 
-```
-┌─────────────────────────────────────────────────────┐
-│                    index.html                        │
-│                                                     │
-│  ┌─────────────┐  ┌──────────────┐  ┌────────────┐  │
-│  │  Canvas      │  │  CSS Grid    │  │  Vanilla   │  │
-│  │  Particle    │  │  + 3D Tilt   │  │  JS        │  │
-│  │  Network     │  │  + Glitch    │  │  Engine    │  │
-│  └──────┬──────┘  └──────┬───────┘  └─────┬──────┘  │
-│         │                │                 │         │
-│         └────────────────┼─────────────────┘         │
-│                          ▼                           │
-│              ┌───────────────────┐                   │
-│              │  PROJECT_DATA[]   │                   │
-│              │  数据驱动渲染      │                   │
-│              └───────────────────┘                   │
-└─────────────────────────────────────────────────────┘
-```
+```mermaid
+graph TD
+    subgraph Core [index.html]
+        direction LR
+        C1(Canvas<br/>Particle<br/>Network)
+        C2(CSS Grid<br/>+ 3D Tilt<br/>+ Glitch)
+        C3(Vanilla<br/>JS<br/>Engine)
+    end
 
+    Data[(PROJECT_DATA<br/>数据驱动渲染)]
+
+    C1 -.-> Data
+    C2 -.-> Data
+    C3 -.-> Data
+
+    classDef module fill:#050510,stroke:#FF003C,stroke-width:2px,color:#fff
+    classDef db fill:#050510,stroke:#FCEE0A,stroke-width:2px,color:#fff
+    classDef container fill:transparent,stroke:#00F0FF,stroke-width:2px,stroke-dasharray: 5 5,color:#00F0FF
+
+    class C1,C2,C3 module
+    class Data db
+    class Core container
+```
 ---
 
 ## 🚀 Quick Start | 快速开始
