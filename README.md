@@ -17,9 +17,16 @@
 
 ---
 
-> **「 当现实世界的监控面板无法满足你，就自己造一个。 」**
+---
+
+> **「 当现实世界的网络设施充满枷锁，架构师的本能就是彻底接管它。 」**
+> 
+> 欢迎接入 **DEEP WEB MATRIX CORE** (深网矩阵核心)。这已不再仅仅是一个赛博朋克风格的零依赖个人主页，而是由 7 大硬核基建模块构成的**全自动化网络防御与调度枢纽**。
 >
-> A zero-dependency, dark-mode cyberpunk personal dashboard — built from scratch with nothing but raw HTML5, CSS3, and the Canvas API. No frameworks. No libraries. No mercy.
+> 从底层流量伪装 (Traffic Padding)、动态路由嗅探 (Route Radar)、无感 Portal 穿透 (Net Guardian)，到主动式端口物理防御 (Port Sentinel) 与高阶代理矩阵 (X-Matrix Pro)。我们用最纯粹的代码，构建最坚固的防线。
+> 
+> A zero-dependency frontend dashboard built with raw HTML5 and Canvas API, now serving as the ultimate command center for 7 decoupled, hardcore infrastructure modules. 
+> **No bloated frameworks. No external dependencies. No mercy.**
 
 ---
 
